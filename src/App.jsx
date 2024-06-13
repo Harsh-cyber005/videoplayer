@@ -97,6 +97,15 @@ const HLSPlayer = () => {
             scriptPlyr.onload = loadPlayer;
         };
 
+        setTimeout(() => {
+            var x;
+            if (window.hls === undefined || window.Plyr === undefined) {
+                x = setTimeout(() => {
+                    window.location.reload();
+                }, 300)
+            };
+        }, 500)
+
         // Cleanup function to remove scripts
         return () => {
             document.body.removeChild(scriptHls);
