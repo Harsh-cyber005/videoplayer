@@ -2,6 +2,19 @@
 @tailwind components;
 @tailwind utilities;
 
-:root{
-    --plyr-color-main: orangered;
+:root {
+    --plyr-color-main: red;
+    --plyr-menu-background: rgba(255, 255, 255, 0.9);
+}
+
+@media only screen and (max-width: 600px) {
+    .plyr__menu__container {
+        bottom: 0;
+        transform: translateY(calc(100% + 10px));
+        transition: none;
+        animation: none;
+    }
+    .plyr__menu__container::after{
+        display: none;
+    }
 }
