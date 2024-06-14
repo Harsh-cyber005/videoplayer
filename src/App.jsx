@@ -4,6 +4,28 @@ import 'plyr/dist/plyr.css';
 const HLSPlayer = () => {
     const videoRef = useRef(null);
 
+    const [plyrObj, setPlyrObj] = React.useState(null);
+
+    const [isMobile, setIsMobile] = React.useState(false);
+    const [cornerCoordinates, setCornerCoordinates] = React.useState({});
+
+    const updateCornerCoordinates = () => {
+        if (videoRef.current) {
+            const rect = videoRef.current.getBoundingClientRect();
+            setCornerCoordinates({
+                topLeft: { x: rect.left, y: rect.top },
+                topRight: { x: rect.right, y: rect.top },
+                bottomLeft: { x: rect.left, y: rect.bottom },
+                bottomRight: { x: rect.right, y: rect.bottom },
+            });
+        }
+    };
+
+    React.useEffect(() => {
+        const mobile = window.matchMedia("(max-width: 768px)").matches;
+        setIsMobile(mobile);
+    })
+
     useEffect(() => {
         const loadPlayer = () => {
             const video = videoRef.current;
@@ -19,18 +41,17 @@ const HLSPlayer = () => {
                     const availableQualities = hls.levels.map((l) => l.height);
                     defaultOptions.controls = [
                         'play-large',
-                        'restart',
+                        (isMobile?'restart':''),
                         'rewind',
                         'play',
                         'fast-forward',
                         'progress',
                         'current-time',
                         'duration',
-                        'mute',
-                        'volume',
-                        'captions',
+                        ...(isMobile?'mute':'s'),
+                        ...(isMobile?'volume':""),
                         'settings',
-                        'pip',
+                        ...(isMobile?'pip':''),
                         'fullscreen',
                     ];
                     defaultOptions.quality = {
@@ -44,9 +65,12 @@ const HLSPlayer = () => {
                         options: [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2]
                     };
                     player = new window.Plyr(video, defaultOptions);
+                    setPlyrObj(player);
+                    // console.log(player);
                 });
                 hls.attachMedia(video);
                 window.hls = hls;
+                updateCornerCoordinates();
 
                 const handleKeyDown = (e) => {
                     if (e.key === " ") {
@@ -66,6 +90,7 @@ const HLSPlayer = () => {
                         player.speed = player.speed - 0.25;
                     }
                 };
+                // console.log(plyrObj);
 
                 document.addEventListener("keydown", handleKeyDown);
 
