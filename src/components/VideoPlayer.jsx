@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable no-inner-declarations */
 import React, { useEffect, useRef } from 'react';
 import 'plyr/dist/plyr.css';
 
@@ -11,7 +13,35 @@ const HLSPlayer = () => {
         const mobile = window.matchMedia("(max-width: 768px)").matches;
         setIsMobile(mobile);
         console.log("Mobile: ", mobile);
-    },[])
+    }, [])
+
+    const optionsforMobile = [
+        'play-large',
+        'play',
+        'fast-forward',
+        'progress',
+        'current-time',
+        'duration',
+        'mute',
+        'settings',
+        'fullscreen',
+    ]
+
+    const optionsforDesktop = [
+        'play-large',
+        'restart',
+        'rewind',
+        'play',
+        'fast-forward',
+        'progress',
+        'current-time',
+        'duration',
+        'mute',
+        'volume',
+        'settings',
+        'pip',
+        'fullscreen',
+    ]
 
     useEffect(() => {
         const loadPlayer = () => {
@@ -23,33 +53,9 @@ const HLSPlayer = () => {
                 const hls = new window.Hls();
 
                 hls.loadSource(source);
-                hls.on(window.Hls.Events.MANIFEST_PARSED, function (event, data) {
+                hls.on(window.Hls.Events.MANIFEST_PARSED, function () {
                     const availableQualities = hls.levels.map((l) => l.height);
-                    defaultOptions.controls = isMobile? [
-                        'play-large',
-                        'play',
-                        'fast-forward',
-                        'progress',
-                        'current-time',
-                        'duration',
-                        'mute',
-                        'settings',
-                        'fullscreen',
-                    ]:[
-                        'play-large',
-                        'restart',
-                        'rewind',
-                        'play',
-                        'fast-forward',
-                        'progress',
-                        'current-time',
-                        'duration',
-                        'mute',
-                        'volume',
-                        'settings',
-                        'pip',
-                        'fullscreen',
-                    ];
+                    defaultOptions.controls = (isMobile ? optionsforMobile : optionsforDesktop);
                     defaultOptions.quality = {
                         default: availableQualities[0],
                         options: availableQualities,
@@ -61,11 +67,9 @@ const HLSPlayer = () => {
                         options: [0.25, 0.5, 1, 1.5, 2]
                     };
                     setPlayer(new window.Plyr(video, defaultOptions));
-                    setPlyrObj(player);
                 });
                 hls.attachMedia(video);
                 window.hls = hls;
-                updateCornerCoordinates();
 
                 const handleKeyDown = (e) => {
                     if (e.key === " ") {
@@ -116,26 +120,27 @@ const HLSPlayer = () => {
             scriptPlyr.onload = loadPlayer;
         };
 
+        var x;
         setTimeout(() => {
-            var x;
             if (window.hls === undefined || window.Plyr === undefined) {
                 x = setTimeout(() => {
                     window.location.reload();
                 }, 300)
-            };
+            }
         }, 500)
 
         // Cleanup function to remove scripts
         return () => {
             document.body.removeChild(scriptHls);
             document.body.removeChild(scriptPlyr);
+            clearTimeout(x);
         };
     }, []);
 
     const [mobilefs, setMobilefs] = React.useState(false);
 
-    function enterFS(){
-        if(isMobile){
+    function enterFS() {
+        if (isMobile) {
             document.documentElement.style.setProperty('--sfs-animation', 'plyr-popup .2s ease');
             document.documentElement.style.setProperty('--sfs-bottom', '100%');
             document.documentElement.style.setProperty('--sfs-transform', 'none');
@@ -145,7 +150,7 @@ const HLSPlayer = () => {
         }
     }
 
-    function exitFS(){
+    function exitFS() {
         document.documentElement.style.setProperty('--sfs-animation', 'none');
         document.documentElement.style.setProperty('--sfs-bottom', '0');
         document.documentElement.style.setProperty('--sfs-transform', 'translateY(calc(100% + 10px))');
@@ -153,13 +158,13 @@ const HLSPlayer = () => {
         setMobilefs(false);
     }
 
-    document.addEventListener("fullscreenchange",()=>{
-        document.fullscreenElement? enterFS() : exitFS();
+    document.addEventListener("fullscreenchange", () => {
+        document.fullscreenElement ? enterFS() : exitFS();
     })
 
     return (
-        <div className={` w-full ${mobilefs?"h-screen":"max-w-[1000px]"} h-min object-fill`}>
-            <video ref={videoRef} className={`${mobilefs?"":"h-full"} w-full`} id="player" controls></video>
+        <div className={` w-full ${mobilefs ? "h-screen" : "max-w-[1000px]"} h-min object-fill`}>
+            <video ref={videoRef} className={`${mobilefs ? "" : "h-full"} w-full`} id="player" controls></video>
         </div>
     );
 };
