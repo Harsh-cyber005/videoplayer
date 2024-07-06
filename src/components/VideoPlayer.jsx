@@ -3,39 +3,15 @@ import 'plyr/dist/plyr.css';
 
 const HLSPlayer = () => {
     const [player, setPlayer] = React.useState(null);
-    const [done, setDone] = React.useState(false);
     const videoRef = useRef(null);
 
-    const [plyrObj, setPlyrObj] = React.useState(null);
-
     const [isMobile, setIsMobile] = React.useState(false);
-    const [cornerCoordinates, setCornerCoordinates] = React.useState({});
-
-    const updateCornerCoordinates = () => {
-        if (videoRef.current) {
-            const rect = videoRef.current.getBoundingClientRect();
-            setCornerCoordinates({
-                topLeft: { x: rect.left, y: rect.top },
-                topRight: { x: rect.right, y: rect.top },
-                bottomLeft: { x: rect.left, y: rect.bottom },
-                bottomRight: { x: rect.right, y: rect.bottom },
-            });
-            // console.log(cornerCoordinates);
-        }
-    };
 
     React.useEffect(() => {
         const mobile = window.matchMedia("(max-width: 768px)").matches;
         setIsMobile(mobile);
-    })
-
-    React.useEffect(()=>{
-        document.addEventListener("dblclick",(e)=>{
-            if(e.clientX > cornerCoordinates?.topLeft?.x && e.clientX < cornerCoordinates?.topRight?.x && e.clientY > cornerCoordinates?.topLeft?.y && e.clientY < cornerCoordinates?.bottomLeft?.y){
-                console.log("Double Clicked on Video");
-            }
-        })
-    },[cornerCoordinates])
+        console.log("Mobile: ", mobile);
+    },[])
 
     useEffect(() => {
         const loadPlayer = () => {
@@ -49,19 +25,29 @@ const HLSPlayer = () => {
                 hls.loadSource(source);
                 hls.on(window.Hls.Events.MANIFEST_PARSED, function (event, data) {
                     const availableQualities = hls.levels.map((l) => l.height);
-                    defaultOptions.controls = [
+                    defaultOptions.controls = isMobile? [
                         'play-large',
-                        (isMobile?'restart':''),
+                        'play',
+                        'fast-forward',
+                        'progress',
+                        'current-time',
+                        'duration',
+                        'mute',
+                        'settings',
+                        'fullscreen',
+                    ]:[
+                        'play-large',
+                        'restart',
                         'rewind',
                         'play',
                         'fast-forward',
                         'progress',
                         'current-time',
                         'duration',
-                        ...(isMobile?'mute':'s'),
-                        ...(isMobile?'volume':""),
+                        'mute',
+                        'volume',
                         'settings',
-                        ...(isMobile?'pip':''),
+                        'pip',
                         'fullscreen',
                     ];
                     defaultOptions.quality = {
@@ -72,7 +58,7 @@ const HLSPlayer = () => {
                     };
                     defaultOptions.speed = {
                         selected: 1,
-                        options: [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2]
+                        options: [0.25, 0.5, 1, 1.5, 2]
                     };
                     setPlayer(new window.Plyr(video, defaultOptions));
                     setPlyrObj(player);
