@@ -15,18 +15,6 @@ const HLSPlayer = () => {
         console.log("Mobile: ", mobile);
     }, [])
 
-    const optionsforMobile = [
-        'play-large',
-        'play',
-        'fast-forward',
-        'progress',
-        'current-time',
-        'duration',
-        'mute',
-        'settings',
-        'fullscreen',
-    ]
-
     const optionsforDesktop = [
         'play-large',
         'restart',
@@ -55,7 +43,7 @@ const HLSPlayer = () => {
                 hls.loadSource(source);
                 hls.on(window.Hls.Events.MANIFEST_PARSED, function () {
                     const availableQualities = hls.levels.map((l) => l.height);
-                    defaultOptions.controls = (isMobile ? optionsforMobile : optionsforDesktop);
+                    defaultOptions.controls = optionsforDesktop;
                     defaultOptions.quality = {
                         default: availableQualities[0],
                         options: availableQualities,

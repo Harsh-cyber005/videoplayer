@@ -1,5 +1,4 @@
-import React from 'react'
-import HLSPlayer from './components/VideoPlayer'
+import HLSPlayer from './components/HLSPlayer'
 
 function Home() {
   return (
