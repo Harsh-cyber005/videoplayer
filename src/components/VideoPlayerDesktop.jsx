@@ -7,13 +7,6 @@ const HLSPlayer = () => {
     const [player, setPlayer] = React.useState(null);
     const videoRef = useRef(null);
 
-    const [isMobile, setIsMobile] = React.useState(false);
-
-    React.useEffect(() => {
-        const mobile = window.matchMedia("(max-width: 768px)").matches;
-        setIsMobile(mobile);
-    }, [])
-
     const optionsforDesktop = [
         'play-large',
         'restart',
