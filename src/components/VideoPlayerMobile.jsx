@@ -122,34 +122,9 @@ const HLSPlayer = () => {
         };
     }, []);
 
-    const [mobilefs, setMobilefs] = React.useState(false);
-
-    function enterFS() {
-        if (isMobile) {
-            document.documentElement.style.setProperty('--sfs-animation', 'plyr-popup .2s ease');
-            document.documentElement.style.setProperty('--sfs-bottom', '100%');
-            document.documentElement.style.setProperty('--sfs-transform', 'none');
-            document.documentElement.style.setProperty('--sfs-transition', '.2s');
-
-            setMobilefs(true);
-        }
-    }
-
-    function exitFS() {
-        document.documentElement.style.setProperty('--sfs-animation', 'none');
-        document.documentElement.style.setProperty('--sfs-bottom', '0');
-        document.documentElement.style.setProperty('--sfs-transform', 'translateY(calc(100% + 10px))');
-        document.documentElement.style.setProperty('--sfs-transition', 'none');
-        setMobilefs(false);
-    }
-
-    document.addEventListener("fullscreenchange", () => {
-        document.fullscreenElement ? enterFS() : exitFS();
-    })
-
     return (
-        <div className={` w-full ${mobilefs ? "h-screen" : "max-w-[1000px]"} h-min object-fill`}>
-            <video ref={videoRef} className={`${mobilefs ? "" : "h-full"} w-full`} id="player" controls></video>
+        <div className={` w-full max-w-[1000px] h-min object-fill`}>
+            <video ref={videoRef} className={`h-full w-full`} id="player" controls></video>
         </div>
     );
 };
