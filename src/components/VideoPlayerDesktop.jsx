@@ -12,7 +12,6 @@ const HLSPlayer = () => {
     React.useEffect(() => {
         const mobile = window.matchMedia("(max-width: 768px)").matches;
         setIsMobile(mobile);
-        console.log("Mobile: ", mobile);
     }, [])
 
     const optionsforDesktop = [
